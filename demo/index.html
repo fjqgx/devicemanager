@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Device Check</title>
+    <script src="../dist/browserdevicemanager.js" ></script>
+  </head>
+  <body>
+    <P>
+      <span>video device list</span>
+      <select id="camera-select"></select>
+      <button id="camera-button">getCameraList</button>
+      <span>screenshare</span><input type="checkbox">
+      <span>width:</span>
+      <input id="video-width" value="640" >
+      <span>height:</span>
+      <input id="video-height" value="480" >
+      <button id="camera-video-button">get camera</button>
+    </P>
+    <p>
+      <span>audio device list</span>
+      <select id="audio-select"></select>
+      <button id="audio-button">getMicList</button>
+      <button id="mic-audio-button">get mic</button>
+      <button id="release-button" >release device</button>
+    </p>
+    <p>
+      <tr>
+        <video id="camera-video" style="width: 640px; height: 480px;" autoplay controls></video>
+        <button id="camera-video-stop-button">stop</button>
+      </tr>
+      <tr>
+        <audio id="mic-audio" controls autoplay></audio>
+        <button id="mic-audio-stop-button">stop</button>
+      </tr>
+    </p>
+  </body>
+  <script>
+    let devicemanager = new BrowserDeviceManager();
+
+    let cameraButton = document.getElementById("camera-button");
+    let cameraSelect = document.getElementById("camera-select");
+    if (cameraSelect) {
+      cameraSelect.options[0] = new Option("screenshare", "screenshare")
+    }
+    let cameraVideoBtuuton = document.getElementById("camera-video-button");
+    let audioButton = document.getElementById("audio-button");
+    let audioSelect = document.getElementById("audio-select");
+    let releaseButton = document.getElementById("release-button");
+    let videoWidthInput = document.getElementById("video-width");
+    let videoHeightInput = document.getElementById("video-height");
+
+    let micAudioButton = document.getElementById("mic-audio-button");
+
+    let cameraVideo = document.getElementById("camera-video");
+    let cameraVideoStopButton = document.getElementById("camera-video-stop-button");
+    let micAudio = document.getElementById("mic-audio");
+    let micAudioStopButton = document.getElementById("mic-audio-stop-button");
+    
+    cameraButton.addEventListener("click", () => {
+      devicemanager.getCameraList().then((list) => {
+        for (let i = 0; i < list.length; ++i) {
+          cameraSelect.options[cameraSelect.options.length] = new Option(list[i].label, list[i].deviceId)
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+    })
+
+    cameraVideoBtuuton.addEventListener("click", () => {
+      if (cameraSelect.selectedIndex === 0) {
+        devicemanager.getScreenTrack().then((mediastream) => {
+          cameraVideo.srcObject = mediastream;
+        }).catch((err) => {
+          console.log("bbbb", err);
+        })
+      } else {
+        let constraints = {
+        width: videoWidthInput.value,
+        height: videoHeightInput.value
+      }
+
+      if (cameraSelect.selectedIndex > -1) {
+        constraints.deviceId = cameraSelect.options[cameraSelect.selectedIndex].value
+      }
+      devicemanager.getVideoTrack(constraints).then((videotrack) => {
+        let mediastream = new MediaStream();
+        mediastream.addTrack(videotrack);
+        cameraVideo.srcObject = mediastream;
+      }).catch((err) => {
+        console.log("aaaa");
+      })
+      }
+    })
+    
+    audioButton.addEventListener("click", () => {
+      devicemanager.getMicList().then((list) => {
+        for (let i = 0; i < list.length; ++i) {
+          audioSelect.options[audioSelect.options.length] = new Option(list[i].label, list[i].deviceId);
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+    }) 
+
+    micAudioButton.addEventListener("click", () => {
+      if (audioSelect.selectedIndex > -1) {
+
+      } else {
+        
+      }
+    })
+    
+    releaseButton.addEventListener("click", () => {
+      devicemanager.releaseAllStream();
+    })
+
+    cameraVideoStopButton.addEventListener("click", () => {
+      if (cameraVideo.srcObject) {
+        cameraVideo.srcObject.getTracks().forEach(element => {
+          element.stop();
+        });
+        cameraVideo.srcObject = null;
+      }
+    })
+  </script>
+</html>

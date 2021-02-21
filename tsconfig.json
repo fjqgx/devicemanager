@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es5" ,
+    "module": "commonjs" ,
+    "lib": [
+      "es5",
+      "es6",
+      "dom",
+      "ES2015.Promise"
+    ],
+    "strict": true ,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "forceConsistentCasingInFileNames": true,
+  }
+}
