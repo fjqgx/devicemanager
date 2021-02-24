@@ -1,6 +1,6 @@
 {
   "name": "browserdevicemanager",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "device management of browser",
   "main": "./dist/browserdevicemanager.js",
   "types": "types/index.d.ts",
@@ -14,11 +14,20 @@
     "dev": "rm -rf ./dist/**.* && webpack --mode development --config script/webpack.dev.config.js",
     "prod": "rm -rf ./dist/**.* && webpack --mode production --config script/webpack.pro.config.js"
   },
+  "keywords": [
+    "devicemanager",
+    "mic",
+    "camera",
+    "screenshare",
+    "audiotrack",
+    "videotrack"
+  ],
   "author": "doubao",
   "license": "ISC",
   "devDependencies": {
     "@types/lodash": "^4.14.165",
     "path": "^0.12.7",
+    "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.0.12",
     "typescript": "^4.1.2",
     "webpack": "^5.10.0",

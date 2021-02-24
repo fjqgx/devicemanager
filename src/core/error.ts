@@ -1,4 +1,3 @@
-import { error } from "console";
 import { IError } from "./interface";
 
 export enum ErrorCode {
@@ -9,6 +8,7 @@ export enum ErrorCode {
   ERROR_DEVICE_VIDEODEVICE_NOTALLOWED,
   ERROR_DEVICE_AUDIODEVICE_NOTREADABLE,
   ERROR_DEVICE_VIDEODEVICE_NOTREADABLE,
+  // ERROR_DEIVCE_CONSTRAINEDERROR,
 
   ERROR_SCREENSHARE_NOTSUPPORT = 10010,
   ERROR_SCREENSHARE_NOTALLOWED,
@@ -19,6 +19,22 @@ export enum ErrorCode {
   ERROR_SCREENSHARE_UNKNOWNERRO = 10019,
 
   ERROR_DEVICE_NOTSUPPORT = 20000,
+}
+
+export enum DeviceErrorDescription {
+  ERRORMESSAGE_DEVICENOTFOUND = "Requested device not found",
+  ERRORMESSAGE_DEVICENOTALLOWED = "Permission_denied",
+  ERRORMESSAGE_MACCHROME_DEVICENOTREADABLE = "Permission denied by system", // mac chrome system disable
+  ERRORMESSAGE_MACSAFARI_DEVICENOTALLOWED = "The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission.",
+  ERRORMESSAGE_MOBILEDEVICE_NOTALLOWED = "video device not allowed",
+  ERRORMESSAGE_AUDIODEVICENOTREADABLE = "Could not start audio source",
+  ERRORMESSAGE_VIDEODEVICENOTREADABLE = "Could not start video source",
+
+  ERRORNAME_DEVICENOTFOUND = "NotFoundError",
+  ERRORNAME_DEVICENOTALLOWED = "NotAllowedError",
+  ERRORNAME_DEVICENOTREADABLE = "NotReadableError",
+  ERRORNAME_DEVICEOVERCONSTRAINED = "OverconstrainedError",
+  ERRORNAME_INVALID_ACCESS = "InvalidAccessError",
 }
 
 export class DeviceError implements IError {

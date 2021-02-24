@@ -23,6 +23,7 @@ export interface IVideoConstraints {
   facingMode ?: FacingMode;
   width ?: number;
   height ?: number;
+  frameRate ?: number;
 }
 
 export interface IScreenConstraints {

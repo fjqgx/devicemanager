@@ -3,6 +3,27 @@ export = DeviceManager;
 export as namespace DeviceManager;
 
 declare namespace DeviceManager {
+
+  export enum ErrorCode {
+    ERROR_DEVICE_UNKNOWNERROR = 10000,
+    ERROR_DEVICE_AUDIODEVICE_NOTFOUND,
+    ERROR_DEVICE_VIDEODEVICE_NOTFOUND,
+    ERROR_DEVICE_AUDIODEVICE_NOTALLOWED,
+    ERROR_DEVICE_VIDEODEVICE_NOTALLOWED,
+    ERROR_DEVICE_AUDIODEVICE_NOTREADABLE,
+    ERROR_DEVICE_VIDEODEVICE_NOTREADABLE,
+  
+    ERROR_SCREENSHARE_NOTSUPPORT = 10010,
+    ERROR_SCREENSHARE_NOTALLOWED,
+    ERROR_SCREENSHARE_ENDED,
+    ERROR_SCREENSHARE_NOPERMISSION,
+    ERROR_SCREENSHARE_SAFARI_INVALIDACCESS,
+  
+    ERROR_SCREENSHARE_UNKNOWNERRO = 10019,
+  
+    ERROR_DEVICE_NOTSUPPORT = 20000,
+  }
+  
   export enum FacingMode {
     USER = "user",
     ENVIRONMENT = "environment",
@@ -16,7 +37,7 @@ declare namespace DeviceManager {
   export interface IAudioConstraints {  
     deviceId?: string;
   }
-  
+
   export interface IVideoConstraints {
     deviceId ?: string;
     facingMode ?: FacingMode;
