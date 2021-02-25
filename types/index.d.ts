@@ -3,9 +3,6 @@ export = DeviceManager;
 export as namespace DeviceManager;
 
 declare namespace DeviceManager {
-<<<<<<< HEAD
-=======
-
   export enum ErrorCode {
     ERROR_DEVICE_UNKNOWNERROR = 10000,
     ERROR_DEVICE_AUDIODEVICE_NOTFOUND,
@@ -25,8 +22,7 @@ declare namespace DeviceManager {
   
     ERROR_DEVICE_NOTSUPPORT = 20000,
   }
-  
->>>>>>> gh-pages
+
   export enum FacingMode {
     USER = "user",
     ENVIRONMENT = "environment",
@@ -40,11 +36,7 @@ declare namespace DeviceManager {
   export interface IAudioConstraints {  
     deviceId?: string;
   }
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> gh-pages
   export interface IVideoConstraints {
     deviceId ?: string;
     facingMode ?: FacingMode;
@@ -58,11 +50,8 @@ declare namespace DeviceManager {
   }
   
   export class BrowserDeviceManager {
-<<<<<<< HEAD
-=======
 
     checkSupportScreenShare (): boolean;
->>>>>>> gh-pages
   
     getCameraList (): Promise<Array<MediaDeviceInfo>>;
   

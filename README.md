@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-## Device Manager
-
-
-
-
-
-=======
 ## Browser Device Manager
 
 This is a device management tool for browsers, which supports the acquisition of microphone, camera and screen shared images. Including some external equipment
@@ -102,5 +94,3 @@ The above interfaces are all returned asynchronously, and the failure can be loc
     console.log("get screen track error:", err);
   })
   ```
->>>>>>> gh-pages
-
