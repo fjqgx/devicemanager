@@ -8,6 +8,10 @@ export class MobileDeviceManager extends BaseDeviceManager {
     super();
   }
 
+  public checkSupportScreenShare (): boolean {
+    return false;
+  }
+
   /**
    * mobile not support screenshare
    * @param constraints 

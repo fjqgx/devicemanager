@@ -1,6 +1,7 @@
 
-import { DeviceError, ErrorCode } from "../error";
-import { IAudioConstraints, IDeviceManager, IError, IScreenConstraints, IVideoConstraints } from "../interface";
+
+import { DeviceError, ErrorCode, DeviceErrorDescription } from "../error";
+import { IAudioConstraints, IDeviceManager, IError, IScreenConstraints, IVideoConstraints, DeviceType } from "../interface";
 
 declare global {
   interface MediaDevices {
@@ -8,16 +9,20 @@ declare global {
   }
 }
 
-enum DeviceType {
-  Camera = "videoinput",
-  Mic = "audioinput",
-  Screen = "screen",
-}
-
 export class BaseDeviceManager implements IDeviceManager {
 
   constructor () {
 
+  }
+
+  public checkSupportScreenShare (): boolean {
+    if (navigator && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      const mediaDevices = navigator.mediaDevices as any;
+      if (mediaDevices.getDisplayMedia) {
+        return true
+      }
+    }
+    return false;
   }
 
   public getCameraList (): Promise<Array<MediaDeviceInfo>> {
@@ -27,10 +32,10 @@ export class BaseDeviceManager implements IDeviceManager {
           this.getDeviceList(DeviceType.Camera).then((list) => {
             resolve(list)
           }).catch((err) => {
-            reject(err);
+            reject(this.parseError(DeviceType.Camera, err));
           })
         }).catch((err) => {
-          reject(err);
+          reject(this.parseError(DeviceType.Camera, err));
         })
       } else {
         reject(new DeviceError(ErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"))
@@ -45,10 +50,10 @@ export class BaseDeviceManager implements IDeviceManager {
           this.getDeviceList(DeviceType.Mic).then((list) => {
             resolve(list);
           }).catch((err) => {
-            reject(err)
+            reject(this.parseError(DeviceType.Mic, err))
           })
         }).catch((err) => {
-          reject(err);
+          reject(this.parseError(DeviceType.Mic, err));
         })
       } else {
         reject(new DeviceError(ErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"))
@@ -60,11 +65,12 @@ export class BaseDeviceManager implements IDeviceManager {
     return new Promise((resolve, reject) => {
       if (this.checkSupport()) {
         let audioConstraints: { 
-          audio ?: boolean;
-          deviceId ?: string;
+          audio ?: boolean | IAudioConstraints;
         };
         if (constraints && constraints.deviceId) {
-          audioConstraints = { deviceId: constraints.deviceId}
+          audioConstraints = { 
+            audio: {deviceId: constraints.deviceId}
+          }
         } else {
           audioConstraints = { audio: true };
         }
@@ -108,30 +114,12 @@ export class BaseDeviceManager implements IDeviceManager {
     })
   }
 
-  // public releaseAllStream(): void {
-  //   if (this.mediaStream) {
-  //     this.mediaStream.getTracks().forEach((track) => {
-  //       this.mediaStream.removeTrack(track);
-  //       track.stop();
-  //     })
-  //   }
-  // }
 
   protected checkSupport (): boolean {
-    if (navigator && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-      const mediaDevices = navigator.mediaDevices as any;
-      if (mediaDevices.getDisplayMedia) {
-        return true
-      }
-    }
-    return false
-  }
-
-  protected checkSupportScreenShare (): boolean {
-    if (navigator && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+    if (navigator && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices && navigator.mediaDevices.getUserMedia) {
       return true;
     }
-    return false;
+    return false
   }
 
   protected getDeviceList (deviceType: DeviceType): Promise<Array<MediaDeviceInfo>> {
@@ -170,7 +158,56 @@ export class BaseDeviceManager implements IDeviceManager {
   }
 
   protected parseError (deviceType: DeviceType, err:Error): IError {
-    return new DeviceError(ErrorCode.ERROR_DEVICE_UNKNOWNERROR, "");
+    let error: IError | null = null;
+    if (DeviceType.Mic === deviceType) {
+      error = this.parseAudioError(err);
+    } else if (DeviceType.Camera === deviceType) {
+      error = this.parseAudioError(err);
+    } else if (DeviceType.Screen === deviceType) {
+      error = this.parseAudioError(err);
+    }
+    if (null === error) {
+      return new DeviceError(ErrorCode.ERROR_DEVICE_UNKNOWNERROR, "");
+    } 
+    return error;
+  }
+
+  protected parseAudioError (err: Error): IError | null {
+    if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTFOUND 
+      || err.name === DeviceErrorDescription.ERRORNAME_DEVICENOTFOUND) {
+      return new DeviceError(ErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTFOUND, "audio device not found");
+    } else if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTALLOWED 
+      || err.message === DeviceErrorDescription.ERRORMESSAGE_MACSAFARI_DEVICENOTALLOWED) {
+      return new DeviceError(ErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTALLOWED, "audio device not allowed");
+    } else if (err.message === DeviceErrorDescription.ERRORMESSAGE_MACCHROME_DEVICENOTREADABLE 
+      || err.message === DeviceErrorDescription.ERRORMESSAGE_AUDIODEVICENOTREADABLE 
+      || err.message === DeviceErrorDescription.ERRORNAME_DEVICENOTREADABLE) {
+      return new DeviceError(ErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTREADABLE, "audio device not readable");
+    }
+    return null;
+  }
+
+  protected parseVideoError (err: Error): IError | null {
+    if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTFOUND 
+      || err.name === DeviceErrorDescription.ERRORNAME_DEVICENOTFOUND) {
+        return new DeviceError(ErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTFOUND, "video device not found");
+    } else if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTALLOWED 
+      || err.message === DeviceErrorDescription.ERRORMESSAGE_MOBILEDEVICE_NOTALLOWED 
+      || err.message === DeviceErrorDescription.ERRORMESSAGE_MACSAFARI_DEVICENOTALLOWED) {
+      return new DeviceError(ErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTALLOWED, "video device not allowed");
+    } else if (err.message === DeviceErrorDescription.ERRORMESSAGE_MACCHROME_DEVICENOTREADABLE 
+      || err.message === DeviceErrorDescription.ERRORMESSAGE_VIDEODEVICENOTREADABLE 
+      || err.name === DeviceErrorDescription.ERRORNAME_DEVICENOTREADABLE) {
+      return new DeviceError(ErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTREADABLE, "video device not readable");
+    } 
+    // else if (err.name === DeviceErrorDescription.ERRORNAME_DEVICEOVERCONSTRAINED) {
+    //   return new DeviceError(ErrorCode.ERROR_DEIVCE_CONSTRAINEDERROR, "constraints" + err.constraint + " error");
+    // }
+    return null;
+  }
+
+  protected parseScreenError (err: Error): IError | null {
+    return null;
   }
 
   /**
@@ -180,14 +217,15 @@ export class BaseDeviceManager implements IDeviceManager {
    */
   protected createVideoConstraints(constraints: IVideoConstraints): MediaStreamConstraints {
     let videoConstraints: MediaStreamConstraints;
-    if (!constraints.deviceId && !constraints.width && !constraints.height) {
+    if (!constraints.deviceId && !constraints.width && !constraints.height && !constraints.frameRate) {
       videoConstraints = { video: true };
     } else {
       videoConstraints = {
         video: {
           deviceId: constraints.deviceId,
           width: constraints.width,
-          height: constraints.height
+          height: constraints.height,
+          frameRate: constraints.frameRate,
         }
       };
     }

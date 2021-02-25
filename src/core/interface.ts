@@ -4,6 +4,12 @@ export enum MobileCameraType {
   ENV = 1,
 }
 
+export enum DeviceType {
+  Camera = "videoinput",
+  Mic = "audioinput",
+  Screen = "screen",
+}
+
 export enum FacingMode {
   USER = "user",
   ENVIRONMENT = "environment",
@@ -23,6 +29,8 @@ export interface IVideoConstraints {
   facingMode ?: FacingMode;
   width ?: number;
   height ?: number;
+
+  frameRate ?: number;
 }
 
 export interface IScreenConstraints {
@@ -31,6 +39,9 @@ export interface IScreenConstraints {
 }
 
 export interface IDeviceManager {
+  
+  checkSupportScreenShare (): boolean;
+
   getCameraList (): Promise<Array<MediaDeviceInfo>>;
 
   getMicList (): Promise<Array<MediaDeviceInfo>>;

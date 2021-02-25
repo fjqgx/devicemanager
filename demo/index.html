@@ -9,11 +9,12 @@
       <span>video device list</span>
       <select id="camera-select"></select>
       <button id="camera-button">getCameraList</button>
-      <span>screenshare</span><input type="checkbox">
       <span>width:</span>
       <input id="video-width" value="640" >
       <span>height:</span>
       <input id="video-height" value="480" >
+      <span>frameRate:</span>
+      <input id="video-framerate" value="30">
       <button id="camera-video-button">get camera</button>
     </P>
     <p>
@@ -21,17 +22,14 @@
       <select id="audio-select"></select>
       <button id="audio-button">getMicList</button>
       <button id="mic-audio-button">get mic</button>
-      <button id="release-button" >release device</button>
     </p>
     <p>
-      <tr>
-        <video id="camera-video" style="width: 640px; height: 480px;" autoplay controls></video>
-        <button id="camera-video-stop-button">stop</button>
-      </tr>
-      <tr>
-        <audio id="mic-audio" controls autoplay></audio>
-        <button id="mic-audio-stop-button">stop</button>
-      </tr>
+      <video id="camera-video" style="width: 640px; height: 480px;" autoplay playsinline controls></video>
+      <span id="video-info"></span>
+      <button onclick="getVideoInfo()" >get video info</button>
+      <button id="camera-video-stop-button">stop</button>
+      <audio id="mic-audio" controls autoplay></audio>
+      <button id="mic-audio-stop-button">stop</button>
     </p>
   </body>
   <script>
@@ -39,24 +37,46 @@
 
     let cameraButton = document.getElementById("camera-button");
     let cameraSelect = document.getElementById("camera-select");
-    if (cameraSelect) {
+    if (cameraSelect && devicemanager.checkSupportScreenShare()) {
       cameraSelect.options[0] = new Option("screenshare", "screenshare")
     }
     let cameraVideoBtuuton = document.getElementById("camera-video-button");
     let audioButton = document.getElementById("audio-button");
     let audioSelect = document.getElementById("audio-select");
-    let releaseButton = document.getElementById("release-button");
     let videoWidthInput = document.getElementById("video-width");
     let videoHeightInput = document.getElementById("video-height");
-
+    let videoFrameRateInput = document.getElementById("video-framerate");
     let micAudioButton = document.getElementById("mic-audio-button");
 
     let cameraVideo = document.getElementById("camera-video");
     let cameraVideoStopButton = document.getElementById("camera-video-stop-button");
     let micAudio = document.getElementById("mic-audio");
     let micAudioStopButton = document.getElementById("mic-audio-stop-button");
+    let videoInfoSpan = document.getElementById("video-info");
     
+    function getVideoInfo () {
+      setTimeout(() => {
+        if (cameraVideo.srcObject) {
+          let frameRate;
+          let videoTrack = cameraVideo.srcObject.getVideoTracks()[0];
+          if (videoTrack) {
+            let settings = videoTrack.getSettings();
+            frameRate = settings ? settings.frameRate : undefined;
+          }
+          if (frameRate) {
+            videoInfoSpan.innerHTML = "width:" + cameraVideo.videoWidth + "   height:" + cameraVideo.videoHeight + "  frameRate:" + frameRate;
+          } else {
+            videoInfoSpan.innerHTML = "width:" + cameraVideo.videoWidth + "   height:" + cameraVideo.videoHeight;
+          }
+        } else {
+          videoInfoSpan.innerHTML = "width:" + 0 + "   height:" + 0;
+        }
+          
+      }, 500)
+    }
+
     cameraButton.addEventListener("click", () => {
+      cameraSelect.options = [];
       devicemanager.getCameraList().then((list) => {
         for (let i = 0; i < list.length; ++i) {
           cameraSelect.options[cameraSelect.options.length] = new Option(list[i].label, list[i].deviceId)
@@ -70,25 +90,28 @@
       if (cameraSelect.selectedIndex === 0) {
         devicemanager.getScreenTrack().then((mediastream) => {
           cameraVideo.srcObject = mediastream;
+          getVideoInfo();
         }).catch((err) => {
           console.log("bbbb", err);
         })
       } else {
         let constraints = {
-        width: videoWidthInput.value,
-        height: videoHeightInput.value
-      }
+          width: videoWidthInput.value,
+          height: videoHeightInput.value,
+          frameRate: videoFrameRateInput.value,
+        }
 
-      if (cameraSelect.selectedIndex > -1) {
-        constraints.deviceId = cameraSelect.options[cameraSelect.selectedIndex].value
-      }
-      devicemanager.getVideoTrack(constraints).then((videotrack) => {
-        let mediastream = new MediaStream();
-        mediastream.addTrack(videotrack);
-        cameraVideo.srcObject = mediastream;
-      }).catch((err) => {
-        console.log("aaaa");
-      })
+        if (cameraSelect.selectedIndex > -1) {
+          constraints.deviceId = cameraSelect.options[cameraSelect.selectedIndex].value
+        }
+        devicemanager.getVideoTrack(constraints).then((videotrack) => {
+          let mediastream = new MediaStream();
+          mediastream.addTrack(videotrack);
+          cameraVideo.srcObject = mediastream;
+          getVideoInfo();
+        }).catch((err) => {
+          console.log("get video track error:", err);
+        })
       }
     })
     
@@ -103,15 +126,19 @@
     }) 
 
     micAudioButton.addEventListener("click", () => {
+      let constraints = undefined;
       if (audioSelect.selectedIndex > -1) {
-
-      } else {
-        
+        constraints = {
+          deviceId: audioSelect.options[audioSelect.selectedIndex].value
+        }
       }
-    })
-    
-    releaseButton.addEventListener("click", () => {
-      devicemanager.releaseAllStream();
+      devicemanager.getAudioTrack(constraints).then((audiotrack) => {
+        let mediastream = new MediaStream();
+        mediastream.addTrack(audiotrack);
+        micAudio.srcObject = mediastream;
+      }).catch((err) => {
+        console.log('get audio track error:', err);
+      })
     })
 
     cameraVideoStopButton.addEventListener("click", () => {
