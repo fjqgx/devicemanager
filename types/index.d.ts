@@ -51,6 +51,8 @@ declare namespace DeviceManager {
   }
   
   export class BrowserDeviceManager {
+
+    checkSupportScreenShare (): boolean;
   
     getCameraList (): Promise<Array<MediaDeviceInfo>>;
   
