@@ -24,7 +24,7 @@
       <button id="mic-audio-button">get mic</button>
     </p>
     <p>
-      <video id="camera-video" style="width: 640px; height: 480px;" autoplay controls></video>
+      <video id="camera-video" style="width: 640px; height: 480px;" autoplay playsinline controls></video>
       <span id="video-info"></span>
       <button onclick="getVideoInfo()" >get video info</button>
       <button id="camera-video-stop-button">stop</button>
@@ -37,7 +37,7 @@
 
     let cameraButton = document.getElementById("camera-button");
     let cameraSelect = document.getElementById("camera-select");
-    if (cameraSelect) {
+    if (cameraSelect && devicemanager.checkSupportScreenShare()) {
       cameraSelect.options[0] = new Option("screenshare", "screenshare")
     }
     let cameraVideoBtuuton = document.getElementById("camera-video-button");

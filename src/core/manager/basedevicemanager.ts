@@ -1,6 +1,6 @@
 
 import { DeviceError, ErrorCode, DeviceErrorDescription } from "../error";
-import { IAudioConstraints, IDeviceManager, IError, IScreenConstraints, IVideoConstraints } from "../interface";
+import { IAudioConstraints, IDeviceManager, IError, IScreenConstraints, IVideoConstraints, DeviceType } from "../interface";
 
 declare global {
   interface MediaDevices {
@@ -8,17 +8,21 @@ declare global {
   }
 }
 
-enum DeviceType {
-  Camera = "videoinput",
-  Mic = "audioinput",
-  Screen = "screen",
-}
-
 
 export class BaseDeviceManager implements IDeviceManager {
 
   constructor () {
 
+  }
+
+  public checkSupportScreenShare (): boolean {
+    if (navigator && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      const mediaDevices = navigator.mediaDevices as any;
+      if (mediaDevices.getDisplayMedia) {
+        return true
+      }
+    }
+    return false;
   }
 
   public getCameraList (): Promise<Array<MediaDeviceInfo>> {
@@ -111,20 +115,10 @@ export class BaseDeviceManager implements IDeviceManager {
   }
 
   protected checkSupport (): boolean {
-    if (navigator && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-      const mediaDevices = navigator.mediaDevices as any;
-      if (mediaDevices.getDisplayMedia) {
-        return true
-      }
-    }
-    return false
-  }
-
-  protected checkSupportScreenShare (): boolean {
-    if (navigator && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+    if (navigator && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices && navigator.mediaDevices.getUserMedia) {
       return true;
     }
-    return false;
+    return false
   }
 
   protected getDeviceList (deviceType: DeviceType): Promise<Array<MediaDeviceInfo>> {

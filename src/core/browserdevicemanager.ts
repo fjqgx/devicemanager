@@ -38,6 +38,10 @@ export class BrowserDeviceManager implements IDeviceManager {
     return this.deviceManager.getScreenTrack(constraints);
   }
 
+  public checkSupportScreenShare (): boolean {
+    return this.deviceManager.checkSupportScreenShare();
+  }
+
   private createDeviceManager ():IDeviceManager {
     if (this.systemUtil.isWindows) {
       return new WindowsDeviceManager();

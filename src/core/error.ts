@@ -23,7 +23,7 @@ export enum ErrorCode {
 
 export enum DeviceErrorDescription {
   ERRORMESSAGE_DEVICENOTFOUND = "Requested device not found",
-  ERRORMESSAGE_DEVICENOTALLOWED = "Permission_denied",
+  ERRORMESSAGE_DEVICENOTALLOWED = "Permission denied",
   ERRORMESSAGE_MACCHROME_DEVICENOTREADABLE = "Permission denied by system", // mac chrome system disable
   ERRORMESSAGE_MACSAFARI_DEVICENOTALLOWED = "The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission.",
   ERRORMESSAGE_MOBILEDEVICE_NOTALLOWED = "video device not allowed",
