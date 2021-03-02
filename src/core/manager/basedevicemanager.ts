@@ -162,9 +162,9 @@ export class BaseDeviceManager implements IDeviceManager {
     if (DeviceType.Mic === deviceType) {
       error = this.parseAudioError(err);
     } else if (DeviceType.Camera === deviceType) {
-      error = this.parseAudioError(err);
+      error = this.parseVideoError(err);
     } else if (DeviceType.Screen === deviceType) {
-      error = this.parseAudioError(err);
+      error = this.parseScreenError(err);
     }
     if (null === error) {
       return new DeviceError(ErrorCode.ERROR_DEVICE_UNKNOWNERROR, "");

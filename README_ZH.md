@@ -1,13 +1,7 @@
 ## 浏览器设备管理
   这是一个用于浏览器的设备管理工具，支持获取麦克风、摄像头和屏幕共享画面。包括一些外接设备
-
-  支持获取麦克风列表
-  支持获取摄像头列表
-  支持获取麦克风设备，成功返回一个AudioTrack，失败返回错误
-  支持获取摄像头设备，成功返回一个VideoTrack，失败返回错误
-  支持获取屏幕共享，成功返回一个MediaStream，失败返回错误
-
-  以上接口都是异步返回的，失败可以通过错误码来定位错误原因。
+  pc端支持windows、macos、linux、electron下的浏览器
+  移动端支持android、ios端的浏览器
   
 
   [设备管理demo](https://fjqgx.github.io/devicemanager/demo/)
@@ -23,6 +17,7 @@
   ``` javascript
     npm i browserdevicemanager
   ```
+
 
 ### 用法
 
@@ -53,9 +48,24 @@
   ```
 
 #### 获取摄像头
+  
+  pc端
   ``` javascript
   var devicemanager = new BrowserDeviceManager();
   devicemanager.getVideoTrack({deviceId: ""}).then((videotrack) => {
+    let mediastream = new MediaStream();
+    mediastream.addTrack(videotrack);
+    video.srcObject = mediastream;  // video is html video element
+  }).catch((err) => {
+    console.log("get video track error:", err);
+  })
+  ```
+
+  移动端
+  ``` javascript
+  var devicemanager = new BrowserDeviceManager();
+  // user is front, environment is back camera
+  devicemanager.getVideoTrack({facingMode: "user" }).then((videotrack) => {
     let mediastream = new MediaStream();
     mediastream.addTrack(videotrack);
     video.srcObject = mediastream;  // video is html video element
