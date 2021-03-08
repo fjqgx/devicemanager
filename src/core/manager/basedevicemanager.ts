@@ -211,7 +211,7 @@ export class BaseDeviceManager implements IDeviceManager {
       if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTALLOWED) {
         return new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_NOTALLOWED, err.message);
       } else {
-        return new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_NOTSUPPORT, err.message);
+        return new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_NOPERMISSION, err.message);
       }
     } else if (err.name === DeviceErrorDescription.ERRORNAME_INVALID_ACCESS) {
       return new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_INVALIDACCESS, err.message);
