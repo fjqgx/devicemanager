@@ -207,6 +207,15 @@ export class BaseDeviceManager implements IDeviceManager {
   }
 
   protected parseScreenError (err: Error): IError | null {
+    if (err.name === DeviceErrorDescription.ERRORNAME_DEVICENOTALLOWED) {
+      if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTALLOWED) {
+        return new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_NOTALLOWED, err.message);
+      } else {
+        return new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_NOTSUPPORT, err.message);
+      }
+    } else if (err.name === DeviceErrorDescription.ERRORNAME_INVALID_ACCESS) {
+      return new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_INVALIDACCESS, err.message);
+    }
     return null;
   }
 
