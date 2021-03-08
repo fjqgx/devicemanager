@@ -1,4 +1,4 @@
-import { DeviceError, ErrorCode } from "../error";
+import { DeviceError, DeviceErrorCode } from "../error";
 import { IScreenConstraints, IVideoConstraints } from "../interface";
 import { BaseDeviceManager } from "./basedevicemanager";
 
@@ -18,7 +18,7 @@ export class MobileDeviceManager extends BaseDeviceManager {
    */
   public getScreenTrack (constraints: IScreenConstraints): Promise<MediaStream> {
     return new Promise((resolve, reject) => {
-      reject(new DeviceError(ErrorCode.ERROR_SCREENSHARE_NOTSUPPORT, "mobile not support screenshare"))
+      reject(new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_NOTSUPPORT, "mobile not support screenshare"))
     })
   }
 

@@ -1,6 +1,6 @@
 
 
-import { DeviceError, ErrorCode, DeviceErrorDescription } from "../error";
+import { DeviceError, DeviceErrorCode, DeviceErrorDescription } from "../error";
 import { IAudioConstraints, IDeviceManager, IError, IScreenConstraints, IVideoConstraints, DeviceType } from "../interface";
 
 declare global {
@@ -38,7 +38,7 @@ export class BaseDeviceManager implements IDeviceManager {
           reject(this.parseError(DeviceType.Camera, err));
         })
       } else {
-        reject(new DeviceError(ErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"))
+        reject(new DeviceError(DeviceErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"))
       }
     })
   }
@@ -56,7 +56,7 @@ export class BaseDeviceManager implements IDeviceManager {
           reject(this.parseError(DeviceType.Mic, err));
         })
       } else {
-        reject(new DeviceError(ErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"))
+        reject(new DeviceError(DeviceErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"))
       }
     })
   }
@@ -80,7 +80,7 @@ export class BaseDeviceManager implements IDeviceManager {
           reject(this.parseError(DeviceType.Mic, err));
         })
       } else {
-        reject(new DeviceError(ErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"));
+        reject(new DeviceError(DeviceErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"));
       }
     })
   }
@@ -95,7 +95,7 @@ export class BaseDeviceManager implements IDeviceManager {
           reject(this.parseError(DeviceType.Camera, err))
         })
       } else {
-        reject(new DeviceError(ErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"))
+        reject(new DeviceError(DeviceErrorCode.ERROR_DEVICE_NOTSUPPORT, "not support navigator.mediaDevices"))
       }
     })
   }
@@ -109,7 +109,7 @@ export class BaseDeviceManager implements IDeviceManager {
           reject(this.parseError(DeviceType.Screen, err));
         })
       } else {
-        reject(new DeviceError(ErrorCode.ERROR_SCREENSHARE_NOTSUPPORT, "browser not support screenshare"))
+        reject(new DeviceError(DeviceErrorCode.ERROR_SCREENSHARE_NOTSUPPORT, "browser not support screenshare"))
       }
     })
   }
@@ -167,7 +167,7 @@ export class BaseDeviceManager implements IDeviceManager {
       error = this.parseScreenError(err);
     }
     if (null === error) {
-      return new DeviceError(ErrorCode.ERROR_DEVICE_UNKNOWNERROR, "");
+      return new DeviceError(DeviceErrorCode.ERROR_DEVICE_UNKNOWNERROR, "");
     } 
     return error;
   }
@@ -175,14 +175,14 @@ export class BaseDeviceManager implements IDeviceManager {
   protected parseAudioError (err: Error): IError | null {
     if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTFOUND 
       || err.name === DeviceErrorDescription.ERRORNAME_DEVICENOTFOUND) {
-      return new DeviceError(ErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTFOUND, "audio device not found");
+      return new DeviceError(DeviceErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTFOUND, "audio device not found");
     } else if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTALLOWED 
       || err.message === DeviceErrorDescription.ERRORMESSAGE_MACSAFARI_DEVICENOTALLOWED) {
-      return new DeviceError(ErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTALLOWED, "audio device not allowed");
+      return new DeviceError(DeviceErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTALLOWED, "audio device not allowed");
     } else if (err.message === DeviceErrorDescription.ERRORMESSAGE_MACCHROME_DEVICENOTREADABLE 
       || err.message === DeviceErrorDescription.ERRORMESSAGE_AUDIODEVICENOTREADABLE 
       || err.message === DeviceErrorDescription.ERRORNAME_DEVICENOTREADABLE) {
-      return new DeviceError(ErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTREADABLE, "audio device not readable");
+      return new DeviceError(DeviceErrorCode.ERROR_DEVICE_AUDIODEVICE_NOTREADABLE, "audio device not readable");
     }
     return null;
   }
@@ -190,15 +190,15 @@ export class BaseDeviceManager implements IDeviceManager {
   protected parseVideoError (err: Error): IError | null {
     if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTFOUND 
       || err.name === DeviceErrorDescription.ERRORNAME_DEVICENOTFOUND) {
-        return new DeviceError(ErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTFOUND, "video device not found");
+        return new DeviceError(DeviceErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTFOUND, "video device not found");
     } else if (err.message === DeviceErrorDescription.ERRORMESSAGE_DEVICENOTALLOWED 
       || err.message === DeviceErrorDescription.ERRORMESSAGE_MOBILEDEVICE_NOTALLOWED 
       || err.message === DeviceErrorDescription.ERRORMESSAGE_MACSAFARI_DEVICENOTALLOWED) {
-      return new DeviceError(ErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTALLOWED, "video device not allowed");
+      return new DeviceError(DeviceErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTALLOWED, "video device not allowed");
     } else if (err.message === DeviceErrorDescription.ERRORMESSAGE_MACCHROME_DEVICENOTREADABLE 
       || err.message === DeviceErrorDescription.ERRORMESSAGE_VIDEODEVICENOTREADABLE 
       || err.name === DeviceErrorDescription.ERRORNAME_DEVICENOTREADABLE) {
-      return new DeviceError(ErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTREADABLE, "video device not readable");
+      return new DeviceError(DeviceErrorCode.ERROR_DEVICE_VIDEODEVICE_NOTREADABLE, "video device not readable");
     } 
     // else if (err.name === DeviceErrorDescription.ERRORNAME_DEVICEOVERCONSTRAINED) {
     //   return new DeviceError(ErrorCode.ERROR_DEIVCE_CONSTRAINEDERROR, "constraints" + err.constraint + " error");
