@@ -231,7 +231,7 @@ export class BaseDeviceManager implements IDeviceManager {
     } else {
       videoConstraints = {
         video: {
-          deviceId: constraints.deviceId,
+          deviceId: {exact: constraints.deviceId},
           width: constraints.width,
           height: constraints.height,
           frameRate: constraints.frameRate,
