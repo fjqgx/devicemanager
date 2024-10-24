@@ -16,6 +16,7 @@ export class BaseDeviceManager implements IDeviceManager {
   }
 
   public checkSupportScreenShare (): boolean {
+    // @ts-ignore
     if (navigator && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
       const mediaDevices = navigator.mediaDevices as any;
       if (mediaDevices.getDisplayMedia) {
@@ -116,6 +117,7 @@ export class BaseDeviceManager implements IDeviceManager {
 
 
   protected checkSupport (): boolean {
+    // @ts-ignore
     if (navigator && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices && navigator.mediaDevices.getUserMedia) {
       return true;
     }

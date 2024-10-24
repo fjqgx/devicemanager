@@ -1,3 +1,4 @@
+import { DeviceErrorCode, FacingMode, IAudioConstraints, IVideoConstraints, IScreenConstraints, IError } from "./core/interface";
 import { BrowserDeviceManager } from "./core/browserdevicemanager";
 
 declare global {
@@ -11,4 +12,12 @@ if (window) {
   window.BrowserDeviceManager = BrowserDeviceManager;
 }
 
-export { BrowserDeviceManager };
+export { 
+  BrowserDeviceManager,
+  DeviceErrorCode, 
+  FacingMode, 
+  IAudioConstraints, 
+  IVideoConstraints, 
+  IScreenConstraints, 
+  IError 
+};
